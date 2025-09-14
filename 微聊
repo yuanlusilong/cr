@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>微信聊天界面</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            max-width: 500px;
+            margin: 0 auto;
+            border-left: 1px solid #ddd;
+            border-right: 1px solid #ddd;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .chat-header {
+            background-color: #1aad19;
+            color: white;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+        }
+        
+        .chat-header .back-btn {
+            font-size: 18px;
+        }
+        
+        .chat-header .title {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 16px;
+            font-weight: 500;
+        }
+        
+        .chat-header .more-btn {
+            font-size: 18px;
+        }
+        
+        .chat-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            background-color: #eee;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23f1f1f1"/><path d="M0,0 L100,100 M100,0 L0,100" stroke="%23e0e0e0" stroke-width="0.5"/></svg>');
+        }
+        
+        .message {
+            display: flex;
+            margin-bottom: 15px;
+        }
+        
+        .message.self {
+            flex-direction: row-reverse;
+        }
+        
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 3px;
+            margin: 0 10px;
+            background-color: #ccc;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+        }
+        
+        .message-content {
+            max-width: 70%;
+        }
+        
+        .bubble {
+            padding: 10px 15px;
+            border-radius: 4px;
+            position: relative;
+            word-break: break-word;
+        }
+        
+        .other .bubble {
+            background-color: white;
+            border-top-left-radius: 0;
+        }
+        
+        .self .bubble {
+            background-color: #95ec69;
+            border-top-right-radius: 0;
+        }
+        
+        .message-time {
+            text-align: center;
+            color: #999;
+            font-size: 12px;
+            margin: 10px 0;
+        }
+        
+        .chat-input {
+            background-color: #f5f5f5;
+            border-top: 1px solid #ddd;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .chat-input i {
+            font-size: 22px;
+            color: #7d7d7d;
+            margin: 0 10px;
+        }
+        
+        .chat-input input {
+            flex: 1;
+            border: none;
+            background-color: white;
+            padding: 10px 15px;
+            border-radius: 20px;
+            outline: none;
+        }
+        
+        .send-btn {
+            background-color: #1aad19;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            margin-left: 10px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        
+        /* 箭头样式 */
+        .other .bubble::before {
+            content: '';
+            position: absolute;
+            left: -6px;
+            top: 0;
+            width: 0;
+            height: 0;
+            border: 6px solid transparent;
+            border-right-color: white;
+            border-left: 0;
+        }
+        
+        .self .bubble::before {
+            content: '';
+            position: absolute;
+            right: -6px;
+            top: 0;
+            width: 0;
+            height: 0;
+            border: 6px solid transparent;
+            border-left-color: #95ec69;
+            border-right: 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- 聊天头部 -->
+    <div class="chat-header">
+        <div class="back-btn"><i class="fas fa-chevron-left"></i></div>
+        <div class="title">微信好友</div>
+        <div class="more-btn"><i class="fas fa-ellipsis-v"></i></div>
+    </div>
+    
+    <!-- 聊天内容区域 -->
+    <div class="chat-container" id="chatContainer">
+        <div class="message-time">今天 10:30</div>
+        
+        <div class="message other">
+            <div class="avatar">友</div>
+            <div class="message-content">
+                <div class="bubble">你好呀！最近怎么样？</div>
+            </div>
+        </div>
+        
+        <div class="message self">
+            <div class="avatar">我</div>
+            <div class="message-content">
+                <div class="bubble">还不错，刚完成了一个小项目！你呢？</div>
+            </div>
+        </div>
+        
+        <div class="message other">
+            <div class="avatar">友</div>
+            <div class="message-content">
+                <div class="bubble">我也挺好的。周末有空一起吃饭吗？我知道一家新开的餐厅不错。</div>
+            </div>
+        </div>
+        
+        <div class="message self">
+            <div class="avatar">我</div>
+            <div class="message-content">
+                <div class="bubble">好啊，周六晚上怎么样？</div>
+            </div>
+        </div>
+        
+        <div class="message other">
+            <div class="avatar">友</div>
+            <div class="message-content">
+                <div class="bubble">周六晚上可以，6点左右我去接你？</div>
+            </div>
+        </div>
+        
+        <div class="message self">
+            <div class="avatar">我</div>
+            <div class="message-content">
+                <div class="bubble">好的，那就这么说定了！😊</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 输入区域 -->
+    <div class="chat-input">
+        <i class="fas fa-plus-circle"></i>
+        <input type="text" id="messageInput" placeholder="输入消息...">
+        <i class="far fa-smile"></i>
+        <button class="send-btn" id="sendBtn">发送</button>
+    </div>
+
+    <script>
+        // 简单的发送消息功能
+        document.getElementById('sendBtn').addEventListener('click', sendMessage);
+        document.getElementById('messageInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+        
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (message) {
+                const chatContainer = document.getElementById('chatContainer');
+                
+                // 创建新消息
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'message self';
+                
+                const avatarDiv = document.createElement('div');
+                avatarDiv.className = 'avatar';
+                avatarDiv.textContent = '我';
+                
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'message-content';
+                
+                const bubbleDiv = document.createElement('div');
+                bubbleDiv.className = 'bubble';
+                bubbleDiv.textContent = message;
+                
+                contentDiv.appendChild(bubbleDiv);
+                messageDiv.appendChild(avatarDiv);
+                messageDiv.appendChild(contentDiv);
+                
+                chatContainer.appendChild(messageDiv);
+                
+                // 清空输入框
+                input.value = '';
+                
+                // 滚动到底部
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+                
+                // 模拟回复
+                setTimeout(() => {
+                    const replyDiv = document.createElement('div');
+                    replyDiv.className = 'message other';
+                    
+                    const replyAvatar = document.createElement('div');
+                    replyAvatar.className = 'avatar';
+                    replyAvatar.textContent = '友';
+                    
+                    const replyContent = document.createElement('div');
+                    replyContent.className = 'message-content';
+                    
+                    const replyBubble = document.createElement('div');
+                    replyBubble.className = 'bubble';
+                    replyBubble.textContent = '收到你的消息了：' + message;
+                    
+                    replyContent.appendChild(replyBubble);
+                    replyDiv.appendChild(replyAvatar);
+                    replyDiv.appendChild(replyContent);
+                    
+                    chatContainer.appendChild(replyDiv);
+                    
+                    // 滚动到底部
+                    chatContainer.scrollTop = chatContainer.scrollHeight;
+                }, 1000);
+            }
+        }
+        
+        // 初始滚动到底部
+        window.onload = function() {
+            const chatContainer = document.getElementById('chatContainer');
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        };
+    </script>
+</body>
+</html>
